@@ -239,7 +239,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       body: CustomScrollView(
         slivers: [
-          // SliverToBoxAdapter: Resumen rápido y Filtro interactivo (Widget Nuevo #1: SegmentedButton)
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(14, 14, 14, 6),
@@ -248,7 +247,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 children: [
                   _buildKpiSummary(),
                   space2,
-                  // Widget Nuevo #1: SegmentedButton
                   SegmentedButton<String>(
                     segments: const [
                       ButtonSegment(
@@ -280,7 +278,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
 
-          // SliverList: Listado de artículos de la alacena
           FutureBuilder<List<ProductoDAO>>(
             future: alacenaDB!.SELECT_PRODUCTOS_COMPLETO(
               filtroEstatus: _filtroSeleccionado,
@@ -425,7 +422,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget ItemProductoAlerta(ProductoDAO prod) {
-    // Configuración visual según el estatus de negocio
     Color statusColor;
     IconData statusIcon;
     String statusTexto = prod.estatus ?? 'DISPONIBLE';
@@ -455,12 +451,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     final int stockTotal = prod.stockTotal ?? 0;
     final int stockMin = prod.stockMinimo ?? 2;
-    // Widget Nuevo #2: LinearProgressIndicator cálculo proporcional
     final double progresoStock = (stockMin > 0)
         ? (stockTotal / (stockMin * 2)).clamp(0.0, 1.0)
         : (stockTotal > 0 ? 1.0 : 0.0);
 
-    // Botón Agregar al Carrito (ADN: btnAddCart) con estilo M3 Expressive
     final btnAddCart = FilledButton.icon(
       style: FilledButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -486,7 +480,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       },
     );
 
-    // Botón Rápido Consumir (ADN: btnConsumirFEFO) con estilo M3 Expressive
     final btnConsumirFEFO = OutlinedButton.icon(
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -533,20 +526,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           child: Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            // Widget Nuevo #3: ExpansionTile
             child: ExpansionTile(
               leading: _buildImagenProducto(prod.imagen, prod.categoriaNombre),
               title: Text(
                 prod.nombre ?? 'Sin Nombre',
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 6),
-                  Row(
+                  // CORRECCIÓN: Se usa Wrap en lugar de Row para evitar desborde con textos largos
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 4,
                     children: [
-                      // Chip Semántico de Estatus estilo Pill / Stadium
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 3),
@@ -570,7 +567,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 8),
                       Text(
                         prod.categoriaNombre ?? 'General',
                         style: TextStyle(
@@ -578,11 +574,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.w500,
                         ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  // Widget Nuevo #2: LinearProgressIndicator para comparar stock vs mínimo
                   Row(
                     children: [
                       Expanded(
@@ -650,6 +646,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     .onSurfaceVariant,
                                 fontStyle: FontStyle.italic,
                               ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -692,7 +689,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         );
       }
     }
-    // Fallback a ícono ilustrativo por categoría
     IconData iconData = Icons.fastfood;
     Color iconColor = Theme.of(context).colorScheme.primary;
     if (categoria != null) {
@@ -756,14 +752,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                   ),
                   const SizedBox(width: 6),
-                  Text(
-                    '— Vence: ${lote.fechaCaducidad}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  Expanded(
+                    child: Text(
+                      '— Vence: ${lote.fechaCaducidad}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const Spacer(),
                   if (lote.notificarAlarma == 1)
                     const Icon(Icons.alarm, size: 14, color: Colors.orange),
                 ],

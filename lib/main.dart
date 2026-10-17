@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'package:prac2/components/global_values.dart';
 import 'package:prac2/components/theme_app.dart';
@@ -18,6 +21,13 @@ import 'package:prac2/screens/estadisticas_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicialización de la base de datos local SQLite para entorno de escritorio (Windows/Linux/macOS)
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
+
   // Inicialización de notificaciones y alarmas locales
   final notificationService = NotificationService();
   await notificationService.m_initNotifications();

@@ -164,6 +164,8 @@ class _ProductosScreenState extends State<ProductosScreen> {
                       Text(
                         prod.nombre ?? 'Sin Nombre',
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 3),
                       Text(
@@ -172,9 +174,15 @@ class _ProductosScreenState extends State<ProductosScreen> {
                           fontSize: 12,
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 6),
-                      Row(
+                      // Corrección principal: Wrap evita el desborde horizontal (RIGHT OVERFLOWED)
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 8,
+                        runSpacing: 4,
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
@@ -191,7 +199,6 @@ class _ProductosScreenState extends State<ProductosScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 10),
                           Text(
                             'Total: ${prod.stockTotal} ${prod.unidad}',
                             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
